@@ -8,6 +8,7 @@ const romansDict = {
     "M":1000
 }
 
+
 const inputRomanValues = [];
 let errorSyntax = false;
 
@@ -53,24 +54,72 @@ const howManyTimesMinimumSymbol = inputRomanSymbol => {
 let arabValue = 0;
 
 const romanToArab = romanSymbol => {
+    const directArabValue = romansDict[romanSymbol];
+    if(directArabValue){
+        console.log(directArabValue);
+        return 1;
+    }
+    
     checkLeftValues(romanSymbol);
     howManyTimesMaximumSymbol(romanSymbol);
     howManyTimesMinimumSymbol(romanSymbol);
     if(errorSyntax === false){
+        console.log(`roman symbol: ${romanSymbol}`);
         for (let index = 0; index < romanSymbol.length; index++) {
             if(romanSymbol[index] === "I"){
                 if(romanSymbol[index + 1] === "V" || romanSymbol[index + 1] === "X"){
                     let value = romansDict[romanSymbol.charAt(index)];
-                    console.log(value); 
                     arabValue -= value;
                     //arabValue += romansDict[romanSymbol.charAt(index+1)];
                 }
             }
+            if(romanSymbol[index] === "X"){
+                if(romanSymbol[index + 1] === "L" || romanSymbol[index + 1] === "C"){
+                    let value = romansDict[romanSymbol.charAt(index)];
+                    arabValue -= value;
+                    //arabValue += romansDict[romanSymbol.charAt(index+1)];
+                }
+            }
+            if(romanSymbol[index] === "C"){
+                if(romanSymbol[index + 1] === "D" || romanSymbol[index + 1] === "M"){
+                    let value = romansDict[romanSymbol.charAt(index)];
+                    arabValue -= value;
+                    //arabValue += romansDict[romanSymbol.charAt(index+1)];
+                }
+            }else{
+                console.log(`el arabvalue llega con ${arabValue}`);
+                let positionOfIV = romanSymbol.indexOf("IV");
+                console.log("posicionIV"+positionOfIV);
+                let value = 0;
+                if(positionOfIV >= 0){
+                    console.log("dentro IV");
+                    value = romansDict[romanSymbol.charAt(positionOfIV+1)];
+                    arabValue += value;
+                    
+                }
+                let positionOfIX = romanSymbol.indexOf("IX");
+                console.log("posicionIX: "+ positionOfIX);
+                if(positionOfIX >= 0){
+                    console.log("dentro IX");
+                    value = romansDict[romanSymbol.charAt(positionOfIX+1)];
+                    arabValue += value;
+                }
+                
+                console.log("El value" + value);
+                
+                console.log(`values ${value}`);
+                
+                
+                /*if(romanSymbol.includes("IV") ){
+                    console.log("se da el caso");
+                }*/
+            }
         }
+        console.log(`arabValue es: ${arabValue}`);
     }
 }
 
-romanToArab("DCIXV");
+romanToArab("XIX");
 console.log(arabValue);
 
 arabDict = {
@@ -85,70 +134,80 @@ arabDict = {
 }
 let romanNumberFromArab = "";
 const arabToRomanNumber = userArabNumber => {
-    console.log(userArabNumber);
-    const directRomanValue = arabDict[userArabNumber]
+    const directRomanValue = arabDict[userArabNumber];
     if(directRomanValue){
         console.log(directRomanValue);
         return 1;
     }
-    do {
-        do{
-            console.log(userArabNumber % 1000 === 0);
-            console.log("divisible entre 1000");
-            romanNumberFromArab += "M";
-            userArabNumber -= 1000;
-            console.log(`divisible1000 ${userArabNumber}`);
-        }while(userArabNumber === 1);
-        
-        console.log(userArabNumber % 500);
-        do {
-            console.log("divisible entre 500");
-            romanNumberFromArab += "D";
-            userArabNumber -= 500;
-            console.log(`divisble500 ${userArabNumber}`);
-        } while(userArabNumber % 500 === 0);
-        
-        console.log("hola2");
-        do{
-            console.log("divisible entre 100");
-            romanNumberFromArab += "C";
-            userArabNumber -= 100;
-            console.log(`divisible100 ${userArabNumber}`);
-        }while(userArabNumber % 100 === 0);
-        
-        do{
-            console.log("divisible entre 50");
-            romanNumberFromArab += "L";
-            userArabNumber -= 50;
-            console.log(`divisible50 ${userArabNumber}`);
-        }while(userArabNumber % 50 === 0);
-        
-        do{
-            console.log("divisible entre 10");
-            romanNumberFromArab += "X";
-            userArabNumber -= 10;
-            console.log(`divisible10 ${userArabNumber}`);
-        }while(userArabNumber % 10 === 0);
-        
-        /*}else{
-            console.log("else");
-            romanNumberFromArab += "I";
-            userArabNumber -= 1;
-            console.log(`else ${userArabNumber}`);
-        }*/
-    }while (userArabNumber > 0);
+
+    while(userArabNumber -1000 >= 0){
+        romanNumberFromArab += "M";
+        userArabNumber -= 1000;
+    }
+    
+    while(userArabNumber -500 >= 0){
+        romanNumberFromArab += "D";
+        userArabNumber -= 500;
+    } 
+
+    while(userArabNumber - 100 >= 0){
+        romanNumberFromArab += "C";
+        userArabNumber -= 100;
+    }
+    
+    while(userArabNumber -50 >= 0){
+        romanNumberFromArab += "L";
+        userArabNumber -= 50;
+    }
+    
+    while(userArabNumber -10 >= 0){
+        romanNumberFromArab += "X";
+        userArabNumber -= 10;
+    }
+
+    while(userArabNumber - 5 >= 0){
+        romanNumberFromArab += "V";
+        userArabNumber -= 5;
+    }
+    
+    while(userArabNumber -1 >= 0){
+        romanNumberFromArab += "I";
+        userArabNumber -= 1;
+    }
 }
 
 const arabToRoman = arabNumber => {
     arabToRomanNumber(arabNumber);
-    console.log(romanNumberFromArab);
+    const howManyTimesI = romanNumberFromArab.replace(/[^I]/g, "").length;
+    const howManyTimesX = romanNumberFromArab.replace(/[^X]/g, "").length;
+    const howManyTimesC = romanNumberFromArab.replace(/[^C]/g, "").length;
+    if(howManyTimesI > 3){
+        let positionOfFirstI = romanNumberFromArab.indexOf("I");
+        if(romanNumberFromArab[positionOfFirstI -1] === "V"){
+            romanNumberFromArab = romanNumberFromArab.replace("VIIII", "IX");
+        }else{
+            romanNumberFromArab = romanNumberFromArab.replace("IIII", "IV");
+        }
+    }
+    if(howManyTimesX > 3){
+        let positionOfFirstX = romanNumberFromArab.indexOf("X");
+        if(romanNumberFromArab[positionOfFirstX -1] === "L"){
+            romanNumberFromArab = romanNumberFromArab.replace("LXXXX", "XC");
+        }else{
+            romanNumberFromArab = romanNumberFromArab.replace("XXXX", "XL");
+        }
+    }
+    if(howManyTimesC > 3){
+        let positionOfFirstC = romanNumberFromArab.indexOf("C");
+        if(romanNumberFromArab[positionOfFirstC -1] === "D"){
+            romanNumberFromArab = romanNumberFromArab.replace("DCCCC", "CM");
+        }else{
+            romanNumberFromArab = romanNumberFromArab.replace("CCCC", "CD");
+        }
+    }
+    console.log(`Resultado en números romanos: ${romanNumberFromArab}`);
 }
-//arabToRoman(2);
-
-const romanValidator = (romanNumber) => {
-
-}
-
+arabToRoman(49);
 
 /*IF ERROR SYNTAX == FALSE PONER ESTO*/
 /*if(howManyTimesMaximumSymbol <= 3 && howManyTimesMinimumSymbol <= 1){
